@@ -67,6 +67,17 @@ If PowerShell execution policy blocks activation, run the venv Python directly:
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```
 
+## Run without OpenCode
+
+After cloning or downloading the repository, install Python 3.10+ and Node.js 18+, then run this from the project root:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\run_agronova.ps1
+```
+
+The script creates the backend virtual environment, installs dependencies, starts FastAPI and Vite, and opens `http://127.0.0.1:5173` in the default browser. Keep the PowerShell window open while using AgroNova; press `Ctrl+C` to stop both services.
+
 ## Run the frontend
 
 In a second terminal:
