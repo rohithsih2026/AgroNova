@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "name": "AgroNova demo panchayat boundaries",
+  "properties": {
+    "data_label": "Prototype Demonstration Dataset",
+    "source": "Illustrative geometry around Madurai; replace with official boundary data",
+    "crs": "WGS84 illustrative coordinates"
+  },
+  "features": [
+    {"type":"Feature","properties":{"id":"p-01","name":"Demo Panchayat","risk_status":"Moderate"},"geometry":{"type":"Polygon","coordinates":[[[78.095,9.906],[78.143,9.908],[78.141,9.944],[78.096,9.942],[78.095,9.906]]]}},
+    {"type":"Feature","properties":{"id":"p-02","name":"Kozhippara","risk_status":"Moderate"},"geometry":{"type":"Polygon","coordinates":[[[78.121,9.929],[78.169,9.932],[78.166,9.967],[78.121,9.964],[78.121,9.929]]]}},
+    {"type":"Feature","properties":{"id":"p-03","name":"Melur","risk_status":"Normal"},"geometry":{"type":"Polygon","coordinates":[[[78.129,9.886],[78.173,9.889],[78.170,9.925],[78.128,9.922],[78.129,9.886]]]}},
+    {"type":"Feature","properties":{"id":"p-04","name":"Vadipatti","risk_status":"High"},"geometry":{"type":"Polygon","coordinates":[[[78.171,9.963],[78.219,9.967],[78.216,10.002],[78.170,9.998],[78.171,9.963]]]}},
+    {"type":"Feature","properties":{"id":"p-05","name":"Thirunagaram","risk_status":"High"},"geometry":{"type":"Polygon","coordinates":[[[78.063,9.873],[78.111,9.877],[78.109,9.911],[78.064,9.907],[78.063,9.873]]]}},
+    {"type":"Feature","properties":{"id":"p-06","name":"Usilampatti","risk_status":"Moderate"},"geometry":{"type":"Polygon","coordinates":[[[78.118,9.856],[78.166,9.860],[78.163,9.894],[78.117,9.890],[78.118,9.856]]]}},
+    {"type":"Feature","properties":{"id":"p-07","name":"Tiruppudaimundu","risk_status":"Normal"},"geometry":{"type":"Polygon","coordinates":[[[78.047,9.939],[78.089,9.942],[78.086,9.978],[78.044,9.974],[78.047,9.939]]]}},
+    {"type":"Feature","properties":{"id":"p-08","name":"Pannaipuram","risk_status":"Moderate"},"geometry":{"type":"Polygon","coordinates":[[[78.165,9.913],[78.211,9.917],[78.208,9.952],[78.163,9.948],[78.165,9.913]]]}}
+  ]
+}

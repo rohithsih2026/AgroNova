@@ -1,0 +1,5 @@
+# Optional production-oriented dependencies; the prototype uses a lightweight fallback.
+xgboost>=2.1
+geopandas>=1.0
+pyogrio>=0.9
+psycopg[binary]>=3.2

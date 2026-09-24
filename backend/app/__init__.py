@@ -1,0 +1,1 @@
+"""AgroNova backend package."""

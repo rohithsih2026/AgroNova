@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #17231d;
+  background: #f7faf8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; background: #f7faf8; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #f7faf8; }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #bde8cf; color: #123b2b; }
+
+@layer components {
+  .field-input {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold text-ink outline-none transition placeholder:text-slate-300 focus:border-leaf focus:ring-2 focus:ring-leaf/10;
+  }
+  .leaflet-container { font-family: inherit; }
+  .leaflet-control-zoom a { color: #1d5b45 !important; }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip { border-radius: 12px; }
+}
+
+@keyframes agronova-pulse { 0%, 100% { opacity: .55; transform: scale(.98); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes agronova-flow { 0% { background-position: 0 0; opacity: .55; } 50% { opacity: 1; } 100% { background-position: 18px 0; opacity: .55; } }
+.animate-soft-pulse { animation: agronova-pulse 1.8s ease-in-out infinite; }
+.flow-connector { background-size: 18px 100%; animation: agronova-flow 1.8s ease-in-out infinite; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+@media print {
+  aside, header, footer, button { display: none !important; }
+  main { padding: 0 !important; }
+  .bg-ink { color: #17231d !important; background: white !important; }
+}
