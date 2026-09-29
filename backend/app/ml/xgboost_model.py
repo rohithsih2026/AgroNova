@@ -1,7 +1,7 @@
 """Optional XGBoost adapter boundary.
 
 Install `backend/requirements-optional.txt` to use this adapter in a later model
-iteration. The default demo remains Random Forest because it is smaller and easier
+iteration. The default deployment remains Random Forest because it is smaller and easier
 to reproduce on a laptop.
 """
 

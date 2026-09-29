@@ -1,4 +1,4 @@
-"""Seed the SQLAlchemy schema with clearly labelled prototype records.
+"""Seed the SQLAlchemy schema with the Viluppuram District service-area records.
 
 Run from the backend directory with: python scripts/seed_data.py
 """
@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.data.demo_data import build_alerts, build_crops, build_panchayats  # noqa: E402
+from app.data.reference_data import build_alerts, build_crops, build_panchayats  # noqa: E402
 from app.database import Base, SessionLocal, engine  # noqa: E402
 from app.models import (  # noqa: E402
     Alert,
@@ -35,10 +35,10 @@ def seed() -> None:
         if db.query(User).count() > 0:
             print("Seed skipped: users already exist.")
             return
-        district = District(name="Madurai", state="Tamil Nadu", code="TN-MADURAI")
+        district = District(name="Viluppuram", state="Tamil Nadu", code="TN-VILUPPURAM")
         db.add(district)
         db.flush()
-        block = Block(name="Demo Block", district_id=district.id)
+        block = Block(name="Ulundurpettai", district_id=district.id)
         db.add(block)
         db.flush()
         for panchayat in build_panchayats():
@@ -47,8 +47,8 @@ def seed() -> None:
         for name in [item["name"] for item in build_crops()]:
             db.add(Crop(name=name, code=name.lower().replace(" ", "-"), water_requirement_mm=100))
         db.flush()
-        for email, name, role in [("farmer@agronova.demo", "Kavitha R", "farmer"), ("officer@agronova.demo", "Murugan S", "officer"), ("admin@agronova.demo", "AgroNova Admin", "administrator")]:
-            db.add(User(name=name, email=email, role=role, password_hash="demo-only-no-real-auth"))
+        for email, name, role in [("farmer@agronova.tn.in", "Kavitha R", "farmer"), ("officer@agronova.tn.in", "Murugan S", "officer"), ("admin@agronova.tn.in", "AgroNova Administrator", "administrator")]:
+            db.add(User(name=name, email=email, role=role, password_hash="managed-by-identity-provider"))
         db.flush()
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         for index, panchayat in enumerate(build_panchayats()):
@@ -57,9 +57,9 @@ def seed() -> None:
             db.add(WeatherForecast(location_type="block", location_id=1, forecast_at=now + timedelta(days=offset), temperature=31, rainfall=18, humidity=74, wind_speed=12, rain_probability=40))
         for index, alert in enumerate(build_alerts()):
             db.add(Alert(panchayat_id=None, alert_type=alert["type"], severity=alert["severity"], title=alert["title"], message=alert["message"], is_read=alert["is_read"], valid_until=now + timedelta(hours=24)))
-        db.add(DownscaledForecast(panchayat_id=1, forecast_at=now, temperature=30.8, rainfall=34.2, humidity=82, wind_speed=14, soil_moisture=51, confidence=86, model_version="prototype-rf-v1"))
+        db.add(DownscaledForecast(panchayat_id=1, forecast_at=now, temperature=31.4, rainfall=27.6, humidity=79, wind_speed=15, soil_moisture=52, confidence=86, model_version="agronova-rf-v1"))
         db.commit()
-    print("AgroNova prototype schema seeded.")
+    print("AgroNova schema seeded for Ulundurpettai Block, Viluppuram District.")
 
 
 if __name__ == "__main__":

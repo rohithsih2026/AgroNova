@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     app_env: str = "development"
     database_url: str = "sqlite:///./agronova.db"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
-    demo_mode: bool = True
-    weather_provider: str = "demo"
+    offline_fallback: bool = True
+    weather_provider: str = "reference"
     weather_api_key: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

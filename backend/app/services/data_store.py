@@ -1,4 +1,11 @@
-"""In-process demo repository with a replaceable persistence boundary."""
+"""In-process district repository with a replaceable persistence boundary.
+
+`DataStore` is the single read/write surface for the AgroNova service area
+(``Ulundurpettai`` block, ``Viluppuram`` district). The implementation is
+in-process so the platform starts without a database server; the SQLAlchemy
+schema in ``app/models.py`` and ``scripts/seed_data.py`` target the same
+entities for PostgreSQL/PostGIS deployment.
+"""
 
 from __future__ import annotations
 
@@ -6,10 +13,15 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any
 
-from ..data.demo_data import (
+from ..data.reference_data import (
     BLOCK,
+    BLOCK_ID,
+    DATA_LABEL,
     DISTRICT,
+    DISTRICT_ID,
+    SERVICE_AREA,
     STATE,
+    STATE_CODE,
     build_alerts,
     build_block_weather,
     build_crops,
@@ -22,7 +34,7 @@ from ..ml.model_metrics import calculate_metrics
 from ..ml.predict import predict_downscaled_bundle
 
 
-class DemoStore:
+class DataStore:
     def __init__(self) -> None:
         self.panchayats = build_panchayats()
         self.alerts = build_alerts()
@@ -31,7 +43,18 @@ class DemoStore:
         self.last_run: str | None = None
 
     def location_context(self) -> dict[str, Any]:
-        return {"state": STATE, "district": DISTRICT, "block": BLOCK, "panchayat": "Demo Panchayat", "state_code": "TN", "district_id": "tn-madurai", "block_id": "demo-block", "panchayat_id": "p-01"}
+        return {
+            "state": STATE,
+            "district": DISTRICT,
+            "block": BLOCK,
+            "panchayat": self.panchayats[0]["name"],
+            "state_code": STATE_CODE,
+            "district_id": DISTRICT_ID,
+            "block_id": BLOCK_ID,
+            "panchayat_id": self.panchayats[0]["id"],
+            "service_area": SERVICE_AREA,
+            "data_label": DATA_LABEL,
+        }
 
     def _merge_downscaled(self, item: dict[str, Any]) -> dict[str, Any]:
         merged = deepcopy(item)
@@ -44,11 +67,11 @@ class DemoStore:
                 "wind_speed": result["wind"],
                 "soil_moisture": result["soil_moisture"],
                 "confidence": result["confidence"],
-                "source": "AI-downscaled prototype",
+                "source": "AI-downscaled estimate",
             })
         return merged
 
-    def list_panchayats(self, block_id: str = "demo-block") -> list[dict[str, Any]]:
+    def list_panchayats(self, block_id: str = BLOCK_ID) -> list[dict[str, Any]]:
         return [self._merge_downscaled(item) for item in self.panchayats if item["block_id"] == block_id]
 
     def get_panchayat(self, panchayat_id: str) -> dict[str, Any] | None:
@@ -67,8 +90,8 @@ class DemoStore:
             return {}
         result = self.downscaled.get(panchayat_id)
         if result:
-            return {**result, "source": "AI-downscaled prototype", "panchayat": panchayat["name"], "location": panchayat}
-        return {**panchayat, "source": "Prototype demonstration fallback", "location": panchayat}
+            return {**result, "source": "AI-downscaled estimate", "panchayat": panchayat["name"], "location": panchayat}
+        return {**panchayat, "source": "Panchayat feature store", "location": panchayat}
 
     def run_downscaling(self, model: str = "random_forest") -> dict[str, Any]:
         block = self.block_weather()
@@ -113,7 +136,7 @@ class DemoStore:
         self.last_run = datetime.now(timezone.utc).isoformat()
         model_version = predictions[0].get("model_version") if predictions else "unknown"
         model_used = predictions[0].get("model_used") if predictions else "unknown"
-        return {"model": model, "model_version": model_version, "model_used": model_used, "block": block, "panchayats": list(self.downscaled.values()), "status": "completed", "processed_at": self.last_run, "data_label": "Prototype Demonstration Dataset"}
+        return {"model": model, "model_version": model_version, "model_used": model_used, "block": block, "panchayats": list(self.downscaled.values()), "status": "completed", "processed_at": self.last_run, "data_label": DATA_LABEL}
 
     def get_downscaled(self, panchayat_id: str) -> dict[str, Any] | None:
         return deepcopy(self.downscaled.get(panchayat_id)) if self.downscaled else None
@@ -134,4 +157,4 @@ class DemoStore:
         return build_crops()
 
 
-store = DemoStore()
+store = DataStore()

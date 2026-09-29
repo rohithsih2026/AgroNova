@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field
 
 
 class LoginRequest(BaseModel):
-    email: str = Field(min_length=3)
-    password: str = Field(min_length=1)
+    email: str = Field(default="", max_length=120)
+    password: str = Field(default="", max_length=128)
     role: Literal["farmer", "officer", "administrator"] | None = None
 
 
@@ -17,11 +17,11 @@ class UserResponse(BaseModel):
     role: str
     organization: str
     token: str
-    demo: bool = True
+    service_area: str
 
 
 class DownscaleRequest(BaseModel):
-    block_id: str = "demo-block"
+    block_id: str = "ulundurpettai-block"
     model: Literal["random_forest", "xgboost", "baseline"] = "random_forest"
     include_baseline: bool = True
 

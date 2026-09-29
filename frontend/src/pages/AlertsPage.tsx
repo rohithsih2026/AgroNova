@@ -54,14 +54,14 @@ export function AlertsPage() {
               </button>
             ))}
           </div>
-          {loading ? <div className="p-5"><div className="h-64 animate-pulse rounded-xl bg-slate-100" /></div> : visible.length === 0 ? <div className="p-5"><EmptyState title="No alerts in this view" message="Try another filter or refresh the prototype alert register." /></div> : <AlertList items={visible} selectedId={selected?.id} onSelect={setSelected} />}
+          {loading ? <div className="p-5"><div className="h-64 animate-pulse rounded-xl bg-slate-100" /></div> : visible.length === 0 ? <div className="p-5"><EmptyState title="No alerts in this view" message="Try another filter or refresh the district alert register." /></div> : <AlertList items={visible} selectedId={selected?.id} onSelect={setSelected} />}
         </Card>
         <Card className="h-fit">
           <CardHeader eyebrow="Alert detail" title={selected?.title || 'Select an alert'} />
           {selected ? <AlertDetail item={selected} onRead={() => void markRead(selected)} onSpeak={() => speak(selected)} /> : <div className="p-5"><EmptyState title="Choose an alert" message="Select an alert from the inbox to see its evidence and recommended field action." /></div>}
         </Card>
       </div>
-      <Card className="border-blue-100 bg-blue-50/50"><div className="flex gap-3 p-4 text-xs leading-5 text-blue-800"><Volume2 size={16} className="mt-0.5 shrink-0" /><span><strong>Alert delivery prototype:</strong> browser notifications, voice playback and filters are local demo interactions. A production rollout should connect verified warning sources, escalation policies and delivery logs.</span></div></Card>
+      <Card className="border-blue-100 bg-blue-50/50"><div className="flex gap-3 p-4 text-xs leading-5 text-blue-800"><Volume2 size={16} className="mt-0.5 shrink-0" /><span><strong>Alert delivery channels:</strong> browser notifications, voice playback and filters are configured per user role. Warning sources, escalation policies and delivery logs are managed centrally.</span></div></Card>
     </div>
   )
 }

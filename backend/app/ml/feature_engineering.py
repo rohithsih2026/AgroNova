@@ -1,8 +1,9 @@
 """Feature construction for the replaceable downscaling model.
 
-The input contract is intentionally tabular. A future production pipeline can
-replace the synthetic frame with IMD/ISRO/field observations without changing the
-model service or API response contract.
+The input contract is intentionally tabular and centred on the Ulundurpettai block
+feature space (Viluppuram District, Tamil Nadu). An operational pipeline can replace
+the generated training frame with IMD/ISRO/field observations without changing the
+model service or the API response contract.
 """
 
 from __future__ import annotations
@@ -44,7 +45,7 @@ def _safe_float(value: Any, default: float = 0.0) -> float:
 
 
 def engineer_features(records: Iterable[dict[str, Any]]) -> pd.DataFrame:
-    """Convert API/demo records into the stable model feature frame."""
+    """Convert API records into the stable model feature frame."""
     rows: list[dict[str, float]] = []
     for record in records:
         rows.append(
@@ -56,9 +57,9 @@ def engineer_features(records: Iterable[dict[str, Any]]) -> pd.DataFrame:
                 "pressure": _safe_float(record.get("pressure"), 1008.0),
                 "cloud_cover": _safe_float(record.get("cloud_cover"), 45.0),
                 "solar_radiation": _safe_float(record.get("solar_radiation"), 5.5),
-                "latitude": _safe_float(record.get("latitude"), 9.92),
-                "longitude": _safe_float(record.get("longitude"), 78.12),
-                "elevation": _safe_float(record.get("elevation"), 240.0),
+                "latitude": _safe_float(record.get("latitude"), 11.95),
+                "longitude": _safe_float(record.get("longitude"), 79.31),
+                "elevation": _safe_float(record.get("elevation"), 140.0),
                 "land_use_encoded": LAND_USE_ENCODING.get(str(record.get("land_use", "agriculture")).lower(), 1),
                 "vegetation_index": _safe_float(record.get("vegetation_index", record.get("ndvi")), 0.55),
                 "soil_type_encoded": SOIL_TYPE_ENCODING.get(str(record.get("soil_type", "red loamy")).lower(), 1),
@@ -70,19 +71,24 @@ def engineer_features(records: Iterable[dict[str, Any]]) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=FEATURE_COLUMNS)
 
 
-def make_synthetic_training_data(n_samples: int = 640, seed: int = 42) -> pd.DataFrame:
-    """Create a labelled demonstration set for the local prototype only."""
+def make_training_frame(n_samples: int = 640, seed: int = 42) -> pd.DataFrame:
+    """Build the labelled training frame for the Viluppuram feature space.
+
+    The relationships are simple and are used for model development and monitoring.
+    They are not scientific claims: replace this frame with approved station,
+    satellite and field observations to calibrate the estimator for operations.
+    """
     rng = np.random.default_rng(seed)
-    block_temp = rng.normal(30.4, 2.0, n_samples)
-    block_rain = rng.gamma(1.5, 13.0, n_samples)
+    block_temp = rng.normal(31.4, 2.0, n_samples)
+    block_rain = rng.gamma(1.5, 11.0, n_samples)
     block_humidity = np.clip(rng.normal(70, 11, n_samples), 35, 98)
-    block_wind = np.clip(rng.normal(12, 4, n_samples), 2, 32)
-    pressure = rng.normal(1008, 7, n_samples)
-    cloud = np.clip(rng.normal(48, 22, n_samples), 0, 100)
+    block_wind = np.clip(rng.normal(11, 4, n_samples), 2, 32)
+    pressure = rng.normal(1007, 7, n_samples)
+    cloud = np.clip(rng.normal(45, 22, n_samples), 0, 100)
     solar = np.clip(6.2 - cloud / 28 + rng.normal(0, 0.7, n_samples), 1.5, 9)
-    latitude = rng.normal(9.92, 0.42, n_samples)
-    longitude = rng.normal(78.12, 0.46, n_samples)
-    elevation = np.clip(260 + (latitude - 9.92) * 90 + rng.normal(0, 42, n_samples), 90, 720)
+    latitude = rng.normal(11.95, 0.38, n_samples)
+    longitude = rng.normal(79.31, 0.42, n_samples)
+    elevation = np.clip(140 + (latitude - 11.95) * 85 + rng.normal(0, 38, n_samples), 80, 480)
     land_use = rng.choice([1, 2, 3, 4], n_samples, p=[0.62, 0.2, 0.12, 0.06])
     vegetation = np.clip(rng.normal(0.58, 0.12, n_samples), 0.15, 0.9)
     soil_type = rng.choice([1, 2, 3, 4, 5], n_samples, p=[0.48, 0.18, 0.2, 0.09, 0.05])
@@ -134,8 +140,8 @@ def idw_predict(values: list[float], latitudes: list[float], longitudes: list[fl
         return values[0]
     distances: list[float] = []
     for lat, lon in zip(latitudes, longitudes):
-        # Scale longitude for a stable local distance at the demo latitude.
-        dx = (lon - target_lon) * 0.88
+        # Scale longitude for a stable local distance at the service-area latitude.
+        dx = (lon - target_lon) * 0.978
         distances.append(max((lat - target_lat) ** 2 + dx**2, 1e-8) ** 0.5)
     weights = [1 / (distance**power) for distance in distances]
     denominator = sum(weights)

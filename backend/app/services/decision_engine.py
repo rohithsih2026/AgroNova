@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..data.demo_data import build_forecast
+from ..data.reference_data import DATA_LABEL, build_forecast
 
-CROP_WATER = {"Paddy": 125, "Maize": 95, "Cotton": 110, "Groundnut": 85, "Sugarcane": 165, "Banana": 180, "Tomato": 105, "Onion": 90, "Pulses": 70}
+CROP_WATER = {"Paddy": 125, "Maize": 95, "Cotton": 110, "Groundnut": 85, "Sugarcane": 165, "Banana": 180, "Tomato": 105, "Onion": 90, "Pulses": 70, "Sorghum": 65}
 
 
 def _round(value: float, digits: int = 1) -> float:
@@ -32,7 +32,7 @@ def generate_advisory(payload: dict[str, Any], panchayat: dict[str, Any], foreca
     if humidity >= 78:
         actions.append({"priority": "medium", "title": "Monitor weather-based disease risk", "detail": "High humidity may favour fungal pressure; inspect canopy symptoms. This is not a disease diagnosis."})
     if moisture < 38:
-        actions.append({"priority": "high", "title": "Check root-zone moisture", "detail": "Current soil moisture is below the comfort range for this crop stage."})
+        actions.append({"priority": "high", "title": "Check soil moisture", "detail": "Satellite-derived soil moisture is below the comfort range for this crop stage."})
     actions.append({"priority": "low", "title": "Recheck after 24 hours", "detail": "Weather and soil conditions can change quickly; use the next forecast cycle for the next decision."})
     water_need = CROP_WATER.get(crop, 100) * (1.1 if stage.lower() in {"flowering", "fruit development", "panicle initiation"} else 1.0)
     confidence = round(min(94, max(68, float(panchayat.get("confidence", 86)) - (4 if next_rain > 40 else 0))), 1)
@@ -48,7 +48,7 @@ def generate_advisory(payload: dict[str, Any], panchayat: dict[str, Any], foreca
         "variety": payload.get("variety", "Conventional"),
         "growth_stage": stage,
         "title": title,
-        "summary": f"{next_rain:.0f} mm rainfall is expected in the next 24 hours. Current soil moisture is {moisture:.0f}%.",
+        "summary": f"{next_rain:.0f} mm rainfall is expected in the next 24 hours. Satellite soil moisture is {moisture:.0f}%.",
         "actions": actions,
         "weather": {"temperature": temperature, "rainfall": next_rain, "humidity": humidity, "soil_moisture": moisture},
         "water_requirement_mm": round(water_need * (payload.get("farm_area", 1.0) / 1.0), 1),
@@ -56,10 +56,10 @@ def generate_advisory(payload: dict[str, Any], panchayat: dict[str, Any], foreca
         "confidence_label": "High" if confidence >= 80 else "Medium" if confidence >= 70 else "Low",
         "why": [
             f"Rainfall forecast is {next_rain:.1f} mm for the next 24 hours.",
-            f"Soil moisture is {moisture:.0f}% and temperature is {temperature:.1f}°C.",
+            f"Satellite soil moisture is {moisture:.0f}% and temperature is {temperature:.1f}°C.",
             f"{crop} at {stage.lower()} has an estimated seasonal water requirement of {water_need:.0f} mm.",
         ],
-        "data_label": "Prototype Demonstration Dataset",
+        "data_label": DATA_LABEL,
     }
 
 
@@ -74,17 +74,17 @@ def irrigation_recommendation(payload: dict[str, Any], panchayat: dict[str, Any]
     base = CROP_WATER.get(crop, 100)
     if rain >= 18 or moisture >= 62:
         recommendation = "NO IRRIGATION REQUIRED"
-        reason = "Expected rainfall is sufficient and current soil moisture is adequate."
+        reason = "Expected rainfall is sufficient and current satellite soil moisture is adequate."
         timing = "Reassess in 12–24 hours"
         amount = 0.0
     elif moisture < 34 or (temperature >= 33 and moisture < 43):
         recommendation = "IRRIGATE NOW"
-        reason = "Low root-zone moisture and evapotranspiration indicate near-term water stress."
+        reason = "Low satellite-derived soil moisture and evapotranspiration indicate near-term water stress."
         timing = "Irrigate in the next available early-morning window"
         amount = round(max(8, base * 0.16 * (1.25 if stage.lower() in {"flowering", "fruit development"} else 1.0)), 1)
     else:
         recommendation = "IRRIGATE LATER"
-        reason = "Soil moisture is workable, but the crop will need water before the next dry period."
+        reason = "Satellite soil moisture is workable, but the crop will need water before the next dry period."
         timing = "Schedule within 24 hours and recheck moisture"
         amount = round(max(5, base * 0.1), 1)
     if humidity >= 82 and recommendation == "IRRIGATE NOW":
@@ -103,11 +103,11 @@ def irrigation_recommendation(payload: dict[str, Any], panchayat: dict[str, Any]
         "confidence": 84,
         "confidence_label": "High",
         "why": [
-            f"Soil moisture reading: {moisture:.0f}%.",
+            f"Satellite soil moisture estimate: {moisture:.0f}%.",
             f"Rainfall in the forecast window: {rain:.0f} mm.",
             f"Crop-stage water reference for {crop}: {base} mm.",
         ],
-        "data_label": "Prototype Demonstration Dataset",
+        "data_label": DATA_LABEL,
     }
 
 
@@ -119,14 +119,14 @@ def risk_assessment(panchayat: dict[str, Any]) -> dict[str, Any]:
     risks = [
         {"type": "Heavy Rain", "level": "High" if rain >= 40 else "Moderate" if rain >= 25 else "Low", "probability": min(96, round(18 + rain * 1.65, 1)), "reasons": [f"Rainfall forecast is {rain:.1f} mm", "Block and local forecast comparison completed"], "action": "Ensure drainage channels are clear and postpone irrigation."},
         {"type": "Flood", "level": "High" if panchayat["flood_risk"] >= 65 else "Moderate" if panchayat["flood_risk"] >= 35 else "Low", "probability": panchayat["flood_risk"], "reasons": [f"Distance to water body: {panchayat['distance_to_water']} km", f"Soil moisture: {moisture:.0f}%"], "action": "Inspect low-lying field sections and clear outlet paths."},
-        {"type": "Drought", "level": "High" if panchayat["drought_risk"] >= 65 else "Moderate" if panchayat["drought_risk"] >= 35 else "Low", "probability": panchayat["drought_risk"], "reasons": [f"Soil moisture deficit indicator: {max(0, 45 - moisture):.0f} points", f"Rainfall forecast: {rain:.1f} mm"], "action": "Review irrigation supply and prioritize critical growth stages."},
+        {"type": "Drought", "level": "High" if panchayat["drought_risk"] >= 65 else "Moderate" if panchayat["drought_risk"] >= 35 else "Low", "probability": panchayat["drought_risk"], "reasons": [f"Satellite soil moisture deficit indicator: {max(0, 45 - moisture):.0f} points", f"Rainfall forecast: {rain:.1f} mm"], "action": "Review irrigation supply and prioritize critical growth stages."},
         {"type": "Heat Stress", "level": "High" if panchayat["heat_risk"] >= 65 else "Moderate" if panchayat["heat_risk"] >= 35 else "Low", "probability": panchayat["heat_risk"], "reasons": [f"Temperature: {temperature:.1f}°C", f"Relative humidity: {humidity:.0f}%"], "action": "Irrigate early morning and provide temporary shade where possible."},
         {"type": "High Humidity", "level": "High" if humidity >= 82 else "Moderate" if humidity >= 72 else "Low", "probability": panchayat["humidity_risk"], "reasons": [f"Forecast humidity: {humidity:.0f}%", "Weather-based disease pressure indicator only"], "action": "Inspect canopy symptoms and improve field ventilation; this is not a diagnosis."},
         {"type": "Wind Damage", "level": "High" if panchayat["wind_speed"] >= 25 else "Moderate" if panchayat["wind_speed"] >= 17 else "Low", "probability": panchayat["wind_risk"], "reasons": [f"Wind speed: {panchayat['wind_speed']:.1f} km/h"], "action": "Stake tall crops and secure lightweight field equipment."},
     ]
     levels = ["Critical", "High", "Moderate", "Low"]
     overall = max(risks, key=lambda risk: risk["probability"])
-    return {"panchayat": panchayat["name"], "overall_risk": overall["level"], "risk_score": round(overall["probability"], 1), "risks": risks, "confidence": panchayat["confidence"], "data_label": "Prototype Demonstration Dataset", "disclaimer": "Disease-related outputs are weather-based risk signals, not definitive diagnoses."}
+    return {"panchayat": panchayat["name"], "overall_risk": overall["level"], "risk_score": round(overall["probability"], 1), "risks": risks, "confidence": panchayat["confidence"], "data_label": DATA_LABEL, "disclaimer": "Disease-related outputs are weather-based risk signals, not definitive diagnoses."}
 
 
 def simulate(panchayat: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
@@ -143,6 +143,6 @@ def simulate(panchayat: dict[str, Any], request: dict[str, Any]) -> dict[str, An
         "baseline": {"rainfall": panchayat["rainfall"], "temperature": panchayat["temperature"], "humidity": panchayat["humidity"], "soil_moisture": panchayat["soil_moisture"], "crop_stress": baseline_stress, "water_requirement": 42.0, "irrigation": "Review today"},
         "scenario": {"rainfall": round(rain, 1), "temperature": round(temperature, 1), "humidity": round(humidity, 1), "soil_moisture": round(moisture, 1), "crop_stress": round(scenario_stress, 1), "water_requirement": round(max(5, 42 + water_delta), 1), "irrigation": "Irrigate now" if scenario_stress >= 70 or moisture < 35 else "Irrigate later" if scenario_stress >= 45 else "No irrigation required"},
         "changes": {"crop_stress": round(scenario_stress - baseline_stress, 1), "water_requirement": water_delta, "heat_risk": round(max(0, (temperature - 29) * 8), 1), "drought_risk": round(min(100, max(0, 65 - moisture + max(0, 28 - rain))), 1)},
-        "label": "Simulated estimate — not a forecast",
-        "data_label": "Prototype Demonstration Dataset",
+        "label": "Scenario estimate — not an operational forecast",
+        "data_label": DATA_LABEL,
     }

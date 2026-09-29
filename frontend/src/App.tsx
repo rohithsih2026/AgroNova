@@ -21,9 +21,20 @@ import { WeatherPage } from './pages/WeatherPage'
 import { api } from './services/api'
 import type { LocationContext, User } from './types'
 
-const defaultContext: LocationContext = { state: 'Tamil Nadu', district: 'Madurai', block: 'Demo Block', panchayat: 'Demo Panchayat', state_code: 'TN', district_id: 'tn-madurai', block_id: 'demo-block', panchayat_id: 'p-01' }
+const defaultContext: LocationContext = { state: 'Tamil Nadu', district: 'Viluppuram', block: 'Ulundurpettai', panchayat: 'Ulundurpettai', state_code: 'TN', district_id: 'tn-viluppuram', block_id: 'ulundurpettai-block', panchayat_id: 'p-01', service_area: 'Ulundurpettai Block, Viluppuram District, Tamil Nadu' }
 
-function getStoredUser(): User | null { try { const value = localStorage.getItem('agronova-user'); return value ? JSON.parse(value) as User : null } catch { return null } }
+function getStoredUser(): User | null {
+  try {
+    const value = localStorage.getItem('agronova-user')
+    const parsed = value ? JSON.parse(value) as Partial<User> : null
+    if (!parsed) return null
+    return {
+      ...parsed,
+      service_area: parsed.service_area || 'Ulundurpettai Block, Viluppuram District',
+      data_label: parsed.data_label || 'AgroNova model estimate',
+    } as User
+  } catch { return null }
+}
 
 export default function App() {
   const [user, setUser] = useState<User | null>(getStoredUser)

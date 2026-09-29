@@ -1,7 +1,7 @@
 """Relational schema for the production migration path.
 
-The prototype API can run without these tables, while the seed script creates the
-same schema in SQLite. Spatial columns can be migrated to PostGIS geography types.
+The API can run without these tables, while the seed script creates the same schema in
+SQLite. Spatial columns can be migrated to PostGIS geography types.
 """
 
 from __future__ import annotations
@@ -160,7 +160,7 @@ class DownscaledForecast(Base, TimestampMixin):
     wind_speed: Mapped[float] = mapped_column(Float)
     soil_moisture: Mapped[float] = mapped_column(Float)
     confidence: Mapped[float] = mapped_column(Float)
-    model_version: Mapped[str] = mapped_column(String(80), default="prototype-rf-v1")
+    model_version: Mapped[str] = mapped_column(String(80), default="agronova-rf-v1")
 
 
 class Crop(Base, TimestampMixin):

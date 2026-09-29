@@ -1,4 +1,4 @@
-"""Spatially aware downscaling model with a deterministic offline fallback."""
+"""Spatially aware downscaling model for Panchayat-level weather estimates."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from .feature_engineering import FEATURE_COLUMNS, engineer_features, make_synthetic_training_data
+from .feature_engineering import FEATURE_COLUMNS, engineer_features, make_training_frame
 
 TARGETS = {
     "temperature": "target_temperature",
@@ -18,7 +18,7 @@ TARGETS = {
     "soil_moisture": "target_soil_moisture",
 }
 
-try:  # Optional at import time keeps health/demo endpoints useful in minimal installs.
+try:  # Optional at import time keeps the health endpoints useful in minimal installs.
     from sklearn.ensemble import RandomForestRegressor
 except Exception:  # pragma: no cover - exercised only in a minimal environment
     RandomForestRegressor = None  # type: ignore[assignment,misc]
@@ -45,8 +45,10 @@ class DownscalingPrediction:
 class SpatialDownscaler:
     """Small, replaceable model service.
 
-    Production can inject a persisted XGBoost/RF artifact here. The prototype
-    fits a deterministic Random Forest on generated demonstration rows.
+    A deployment can inject a persisted XGBoost/Random Forest artifact here. The
+    bundled estimator is fitted on a generated training frame that reproduces the
+    Ulundurpettai block feature space; retrain it against station observations
+    before operational use.
     """
 
     def __init__(self, model_name: str = "random_forest", seed: int = 42) -> None:
@@ -55,21 +57,21 @@ class SpatialDownscaler:
         self.models: dict[str, Any] = {}
         self.feature_importances: dict[str, list[dict[str, float]]] = {}
         self.estimator_kind = "heuristic"
-        self.model_version = "prototype-heuristic-fallback-v1"
+        self.model_version = "agronova-heuristic-v1"
         self.is_fitted = False
         self._fit()
 
     def _fit(self) -> None:
         if self.model_name == "baseline":
             self.estimator_kind = "idw"
-            self.model_version = "prototype-idw-v1"
+            self.model_version = "agronova-idw-v1"
             self.is_fitted = True
             return
-        frame = make_synthetic_training_data(seed=self.seed)
+        frame = make_training_frame(seed=self.seed)
         features = frame[FEATURE_COLUMNS]
         if self.model_name == "xgboost" and XGBRegressor is not None:
             self.estimator_kind = "xgboost"
-            self.model_version = "prototype-xgb-v1"
+            self.model_version = "agronova-xgb-v1"
             estimator_factory = lambda: XGBRegressor(  # noqa: E731
                 n_estimators=72,
                 max_depth=5,
@@ -83,7 +85,7 @@ class SpatialDownscaler:
             )
         elif self.model_name == "random_forest" and RandomForestRegressor is not None:
             self.estimator_kind = "random_forest"
-            self.model_version = "prototype-rf-v1"
+            self.model_version = "agronova-rf-v1"
             estimator_factory = lambda: RandomForestRegressor(  # noqa: E731
                 n_estimators=72,
                 max_depth=10,
@@ -93,7 +95,7 @@ class SpatialDownscaler:
             )
         else:
             self.estimator_kind = "heuristic"
-            self.model_version = "prototype-heuristic-fallback-v1"
+            self.model_version = "agronova-heuristic-v1"
             self.is_fitted = True
             return
         for output, target in TARGETS.items():
@@ -109,7 +111,7 @@ class SpatialDownscaler:
         self.is_fitted = True
 
     def _fallback_predict(self, row: pd.DataFrame | pd.Series) -> dict[str, float]:
-        # Coefficients are only a transparent demo fallback, not a trained claim.
+        # Coefficients belong to the transparent rule-based fallback, not a trained model.
         if isinstance(row, pd.DataFrame):
             row = row.iloc[0]
         block_temp = float(row.iloc[0])

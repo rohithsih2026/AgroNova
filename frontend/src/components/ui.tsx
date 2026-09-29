@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { AlertTriangle, CheckCircle2, Info, Leaf, LoaderCircle, ShieldCheck } from 'lucide-react'
 import type { RiskLevel } from '../types'
+import { DATA_LABEL } from '../data/referenceData'
 
 export function Card({ children, className = '', onClick }: { children?: ReactNode; className?: string; onClick?: () => void }) {
   return <section onClick={onClick} className={`rounded-2xl border border-slate-200/80 bg-white shadow-soft ${onClick ? 'cursor-pointer transition hover:-translate-y-0.5 hover:shadow-lift' : ''} ${className}`}>{children}</section>
@@ -17,7 +18,7 @@ export function Button({ children, variant = 'primary', size = 'md', className =
 }
 
 export function DataLabel({ className = '' }: { className?: string }) {
-  return <span className={`inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-amber-700 ${className}`}><Info size={11} /> Prototype Demo Data</span>
+  return <span title={`${DATA_LABEL} · Ulundurpettai Block, Viluppuram District`} className={`inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600 ${className}`}><Info size={11} className="text-leaf" /> Model estimate</span>
 }
 
 export function RiskBadge({ level, compact = false }: { level: RiskLevel | string; compact?: boolean }) {
@@ -25,7 +26,7 @@ export function RiskBadge({ level, compact = false }: { level: RiskLevel | strin
   return <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold ring-1 ${styles[level] || styles.Moderate} ${compact ? 'px-2 py-0.5 text-[10px]' : ''}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{level}</span>
 }
 
-export function ConfidenceMeter({ value, label = 'Prototype model confidence', dark = false }: { value: number; label?: string; dark?: boolean }) {
+export function ConfidenceMeter({ value, label = 'Model confidence', dark = false }: { value: number; label?: string; dark?: boolean }) {
   const safe = Math.max(0, Math.min(100, value))
   const level = safe >= 80 ? 'High' : safe >= 65 ? 'Medium' : 'Low'
   return <div className={dark ? 'text-white' : ''}><div className="mb-1.5 flex items-center justify-between gap-3 text-[11px]"><span className={dark ? 'text-white/65' : 'text-slate-500'}>{label}</span><span className="font-bold">{safe.toFixed(0)}% · {level}</span></div><div className={`h-1.5 overflow-hidden rounded-full ${dark ? 'bg-white/15' : 'bg-slate-100'}`}><div className={`h-full rounded-full transition-all ${safe >= 80 ? 'bg-emerald-400' : safe >= 65 ? 'bg-amber-400' : 'bg-orange-400'}`} style={{ width: `${safe}%` }} /></div></div>

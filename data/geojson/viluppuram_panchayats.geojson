@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "name": "Ulundurpettai block panchayat boundaries, Viluppuram District, Tamil Nadu",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  "metadata": {
+    "district": "Viluppuram",
+    "district_code": "tn-viluppuram",
+    "state": "Tamil Nadu",
+    "block": "Ulundurpettai",
+    "block_id": "ulundurpettai-block",
+    "geometry_status": "approximate operational envelopes pending LGD/Survey of India boundary shapefile",
+    "data_label": "AgroNova model estimate",
+    "note": "Panchayat names and relative positions follow the Ulundurpettai revenue block. Boundaries are operational envelopes for pilot mapping and must be replaced with the official Local Government Directory / Survey of India village boundary layer before cadastral use."
+  },
+  "features": [
+    {"type":"Feature","properties":{"id":"p-01","name":"Ulundurpettai","block":"Ulundurpettai","district":"Viluppuram","risk_status":"Normal","population":23734},"geometry":{"type":"Polygon","coordinates":[[[79.2983,11.9753],[79.3303,11.9773],[79.3283,12.0133],[79.2983,12.0113],[79.2983,11.9753]]]}},
+    {"type":"Feature","properties":{"id":"p-02","name":"Pidagam","block":"Ulundurpettai","district":"Viluppuram","risk_status":"High","population":10961},"geometry":{"type":"Polygon","coordinates":[[[79.3663,11.8943],[79.4003,11.8983],[79.3983,11.9383],[79.3663,11.9343],[79.3663,11.8943]]]}},
+    {"type":"Feature","properties":{"id":"p-03","name":"Sendamangalam","block":"Ulundurpettai","district":"Viluppuram","risk_status":"Moderate","population":10128},"geometry":{"type":"Polygon","coordinates":[[[79.3483,11.9983],[79.3803,12.0003],[79.3803,12.0403],[79.3463,12.0383],[79.3483,11.9983]]]}},
+    {"type":"Feature","properties":{"id":"p-04","name":"Tirunavalur","block":"Ulundurpettai","district":"Viluppuram","risk_status":"Normal","population":6625},"geometry":{"type":"Polygon","coordinates":[[[79.2263,11.9363],[79.2623,11.9403],[79.2603,11.9803],[79.2263,11.9763],[79.2263,11.9363]]]}},
+    {"type":"Feature","properties":{"id":"p-05","name":"Eraiyur","block":"Ulundurpettai","district":"Viluppuram","risk_status":"Moderate","population":8826},"geometry":{"type":"Polygon","coordinates":[[[79.2083,11.9003],[79.2463,11.9043],[79.2443,11.9483],[79.2063,11.9443],[79.2083,11.9003]]]}},
+    {"type":"Feature","properties":{"id":"p-06","name":"Sengurichi","block":"Ulundurpettai","district":"Viluppuram","risk_status":"High","population":6566},"geometry":{"type":"Polygon","coordinates":[[[79.2643,12.0363],[79.3003,12.0383],[79.2983,12.0803],[79.2623,12.0783],[79.2643,12.0363]]]}},
+    {"type":"Feature","properties":{"id":"p-07","name":"Periyakurukkai","block":"Ulundurpettai","district":"Viluppuram","risk_status":"Normal","population":3634},"geometry":{"type":"Polygon","coordinates":[[[79.2943,11.8503],[79.3323,11.8543],[79.3303,11.8983],[79.2923,11.8943],[79.2943,11.8503]]]}},
+    {"type":"Feature","properties":{"id":"p-08","name":"Vellaiyur","block":"Ulundurpettai","district":"Viluppuram","risk_status":"Moderate","population":2903},"geometry":{"type":"Polygon","coordinates":[[[79.3643,11.9183],[79.4023,11.9223],[79.4003,11.9663],[79.3623,11.9623],[79.3643,11.9183]]]}}
+  ]
+}

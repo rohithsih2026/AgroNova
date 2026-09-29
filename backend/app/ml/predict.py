@@ -20,8 +20,8 @@ def predict_downscaled_bundle(records: list[dict[str, Any]], block_values: dict[
     model = get_model(model_name)
     predictions = model.predict(records) if model_name != "baseline" else [None for _ in records]
     block_values = block_values or {}
-    block_lat = float(block_values.get("latitude", 9.92))
-    block_lon = float(block_values.get("longitude", 78.12))
+    block_lat = float(block_values.get("latitude", 11.95))
+    block_lon = float(block_values.get("longitude", 79.31))
     output: list[dict[str, Any]] = []
     for record, prediction in zip(records, predictions):
         lat = float(record.get("latitude", block_lat))
@@ -41,7 +41,7 @@ def predict_downscaled_bundle(records: list[dict[str, Any]], block_values: dict[
             prediction = dict(baseline)
         confidence = round(float(np_clip(68 + abs(prediction["temperature"] - baseline["temperature"]) * 2.2, 68, 94)), 1)
         explanation = [
-            f"Elevation ({record.get('elevation', 240)} m) adjusts the block temperature signal.",
+            f"Elevation ({record.get('elevation', 140)} m) adjusts the block temperature signal.",
             f"Vegetation index ({record.get('vegetation_index', 0.55):.2f}) and water distance ({record.get('distance_to_water', 2):.1f} km) inform local moisture.",
             "Historical weather and block observations are fused as model features.",
         ]

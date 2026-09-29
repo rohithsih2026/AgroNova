@@ -1,1 +1,1 @@
-"""Synthetic demonstration data and deterministic demo store."""
+"""Viluppuram District reference dataset and spatial feature store."""

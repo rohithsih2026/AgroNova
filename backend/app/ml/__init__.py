@@ -1,4 +1,4 @@
-"""Prototype machine-learning modules."""
+"""AgroNova machine-learning modules."""
 
 from .downscaler import DownscalingPrediction, SpatialDownscaler
 from .predict import predict_downscaled_bundle

@@ -1,1 +1,1 @@
-"""Application services for the demo API."""
+"""Application services for the AgroNova API."""

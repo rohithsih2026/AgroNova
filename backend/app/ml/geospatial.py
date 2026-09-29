@@ -1,6 +1,6 @@
 """Optional GeoPandas boundary adapter.
 
-The default demo uses plain GeoJSON-shaped dictionaries so the prototype remains
+The default deployment uses plain GeoJSON-shaped dictionaries so the service remains
 installable without geospatial wheels. Install the optional requirements to use
 this adapter with an official GeoPackage/PostGIS export.
 """

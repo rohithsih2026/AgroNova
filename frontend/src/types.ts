@@ -8,7 +8,7 @@ export interface User {
   role: Role
   organization: string
   token: string
-  demo: boolean
+  service_area?: string
   data_label?: string
 }
 
@@ -21,6 +21,8 @@ export interface LocationContext {
   district_id: string
   block_id: string
   panchayat_id: string
+  service_area?: string
+  data_label?: string
 }
 
 export interface Panchayat {

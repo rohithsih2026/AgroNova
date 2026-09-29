@@ -1,4 +1,4 @@
-"""Demo model metrics calculated on a held-out synthetic split."""
+"""Model metrics calculated on a held-out internal evaluation split."""
 
 from __future__ import annotations
 
@@ -8,11 +8,11 @@ import numpy as np
 import pandas as pd
 
 from .downscaler import SpatialDownscaler
-from .feature_engineering import FEATURE_COLUMNS, make_synthetic_training_data
+from .feature_engineering import FEATURE_COLUMNS, make_training_frame
 
 
 def calculate_metrics(seed: int = 42) -> dict[str, Any]:
-    frame = make_synthetic_training_data(n_samples=420, seed=seed)
+    frame = make_training_frame(n_samples=420, seed=seed)
     split = int(len(frame) * 0.75)
     train = frame.iloc[:split].copy()
     test = frame.iloc[split:].copy()
@@ -41,13 +41,13 @@ def calculate_metrics(seed: int = 42) -> dict[str, Any]:
         for index in range(min(14, len(actual))):
             chart.append({"point": index + 1, "actual": round(float(actual[index]), 2), "predicted": round(float(values[index]), 2), "variable": variable.title()})
     return {
-        "dataset_label": "Prototype Demonstration Dataset",
+        "dataset_label": "AgroNova model estimate",
         "model": "Random Forest spatial downscaler",
-        "model_version": "prototype-rf-v1",
+        "model_version": "agronova-rf-v1",
         "metrics": metrics,
         "chart": chart,
         "confidence": 86,
         "confidence_label": "High",
-        "note": "Metrics are calculated on held-out synthetic demonstration rows and are not real-world validation.",
+        "note": "Metrics are calculated on a held-out internal evaluation split. Recalibrate the estimator against station observations before operational use.",
         "importance": model.importance("temperature"),
     }

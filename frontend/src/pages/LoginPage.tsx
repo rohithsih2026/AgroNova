@@ -15,14 +15,14 @@ export function LoginPage({ onLogin }: { onLogin: (user: User) => void }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const continueDemo = async () => {
+  const signIn = async () => {
     setLoading(true)
     setError('')
     try {
       const user = await api.login(role)
       onLogin(user)
     } catch {
-      setError('The demo session could not be started. Please try again.')
+      setError('Sign-in could not be completed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -34,12 +34,12 @@ export function LoginPage({ onLogin }: { onLogin: (user: User) => void }) {
       <section className="flex min-h-screen items-center justify-center p-5 sm:p-8">
         <div className="w-full max-w-[510px]">
           <MobileBrand />
-          <div className="mb-8"><DataLabel /><h2 className="mt-5 text-3xl font-extrabold tracking-tight text-ink">Welcome to the demo</h2><p className="mt-2 text-sm leading-6 text-slate-500">Choose a role to explore the complete block-to-Panchayat decision workflow.</p></div>
+          <div className="mb-8"><DataLabel /><h2 className="mt-5 text-3xl font-extrabold tracking-tight text-ink">Sign in to AgroNova</h2><p className="mt-2 text-sm leading-6 text-slate-500">Choose your role to continue the block-to-Panchayat advisory workflow for Viluppuram District.</p></div>
           <div className="space-y-3">{roleOptions.map((option) => <RoleButton key={option.role} option={option} active={role === option.role} onClick={() => setRole(option.role)} />)}</div>
           {error && <div className="mt-4 rounded-xl bg-red-50 p-3 text-xs text-red-700">{error}</div>}
-          <Button size="lg" className="mt-7 w-full" onClick={() => void continueDemo()} disabled={loading}>{loading ? 'Starting demo…' : <>Continue as {roleOptions.find((item) => item.role === role)?.label}<ArrowRight size={17} /></>}</Button>
+          <Button size="lg" className="mt-7 w-full" onClick={() => void signIn()} disabled={loading}>{loading ? 'Signing in…' : <>Continue as {roleOptions.find((item) => item.role === role)?.label}<ArrowRight size={17} /></>}</Button>
           <div className="mt-8 grid grid-cols-3 gap-2 border-t border-slate-200 pt-6 text-center text-[10px] text-slate-400"><div className="flex flex-col items-center gap-1"><BrainCircuit size={15} className="text-leaf" />ML ready</div><div className="flex flex-col items-center gap-1"><Map size={15} className="text-sky-500" />GIS aware</div><div className="flex flex-col items-center gap-1"><BarChart3 size={15} className="text-violet-500" />Explainable</div></div>
-          <div className="mt-8 text-center text-[10px] text-slate-400">No real credentials required · Synthetic demonstration data only</div>
+          <div className="mt-8 text-center text-[10px] text-slate-400">Role-based access for farmers, agriculture officers and administrators</div>
         </div>
       </section>
     </div>
@@ -47,7 +47,7 @@ export function LoginPage({ onLogin }: { onLogin: (user: User) => void }) {
 }
 
 function LoginStory() {
-  return <section className="relative hidden overflow-hidden bg-ink lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14"><div className="absolute -right-28 -top-28 h-96 w-96 rounded-full bg-forest/30 blur-3xl" /><div className="absolute -bottom-40 -left-24 h-[500px] w-[500px] rounded-full bg-sky-900/30 blur-3xl" /><div className="relative z-10"><BrandLockup /><div className="mt-24 max-w-xl"><div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-200"><Wifi size={12} /> SIH prototype · offline-ready demo</div><h1 className="text-5xl font-extrabold leading-[1.08] tracking-[-0.04em] text-white xl:text-6xl">From block weather<br /><span className="text-emerald-300">to field intelligence.</span></h1><p className="mt-6 max-w-md text-sm leading-7 text-white/60">A spatially aware decision-support layer that turns coarse weather signals into explainable, crop-specific advisories for every Panchayat.</p><div className="mt-12 flex items-center gap-8"><StoryStat value="8" label="Demo panchayats" /><StoryStat value="5" label="Weather layers" /><StoryStat value="1" label="Clear workflow" /></div></div></div><div className="relative z-10 flex items-center gap-3 text-[10px] text-white/35"><div className="flex -space-x-2"><span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-emerald-500 text-[9px] font-bold text-white">K</span><span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-sky-500 text-[9px] font-bold text-white">M</span><span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-violet-500 text-[9px] font-bold text-white">A</span></div><span>Built for farmers, extension teams and decision-makers</span></div></section>
+  return <section className="relative hidden overflow-hidden bg-ink lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14"><div className="absolute -right-28 -top-28 h-96 w-96 rounded-full bg-forest/30 blur-3xl" /><div className="absolute -bottom-40 -left-24 h-[500px] w-[500px] rounded-full bg-sky-900/30 blur-3xl" /><div className="relative z-10"><BrandLockup /><div className="mt-24 max-w-xl"><div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-200"><Wifi size={12} /> Viluppuram District · Tamil Nadu</div><h1 className="text-5xl font-extrabold leading-[1.08] tracking-[-0.04em] text-white xl:text-6xl">From block weather<br /><span className="text-emerald-300">to field intelligence.</span></h1><p className="mt-6 max-w-md text-sm leading-7 text-white/60">A spatially aware decision-support layer that turns coarse weather signals into explainable, crop-specific advisories for every Panchayat.</p><div className="mt-12 flex items-center gap-8"><StoryStat value="8" label="Panchayats mapped" /><StoryStat value="5" label="Weather layers" /><StoryStat value="1" label="Clear workflow" /></div></div></div><div className="relative z-10 flex items-center gap-3 text-[10px] text-white/35"><div className="flex -space-x-2"><span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-emerald-500 text-[9px] font-bold text-white">K</span><span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-sky-500 text-[9px] font-bold text-white">M</span><span className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-ink bg-violet-500 text-[9px] font-bold text-white">A</span></div><span>Built for farmers, extension teams and decision-makers</span></div></section>
 }
 
 function BrandLockup() {
